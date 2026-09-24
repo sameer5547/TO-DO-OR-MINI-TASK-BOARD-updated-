@@ -1,0 +1,817 @@
+:root {
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+    /* Surfaces */
+    --bg:            #f4f6f9;
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --border:        #e3e8ef;
+    --border-strong: #cbd5e1;
+
+    /* Text */
+    --ink:   #152033;
+    --ink-2: #3d4a5f;
+    --muted: #667085;
+
+    /* Accent + states */
+    --accent:       #2f54d6;
+    --accent-hover: #2444b8;
+    --accent-soft:  #e8edfd;
+    --ring:         rgb(47 84 214 / 0.2);
+    --danger:       #d92d20;
+    --danger-hover: #b42318;
+    --success:      #0e8a5f;
+    --warning:      #c77d0a;
+
+    /* Spacing scale */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+
+    /* Radius: small controls < containers < the main form card */
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    /* Control heights */
+    --control-h:    40px;
+    --control-h-sm: 36px;
+
+    /* Elevation */
+    --shadow-sm:   0 1px 2px rgb(16 24 40 / 0.05);
+    --shadow-pop:  0 8px 24px rgb(16 24 40 / 0.12);
+    --shadow-lift: 0 12px 32px rgb(16 24 40 / 0.08);
+
+    /* Layers */
+    --z-dropdown: 20;
+
+    /* Page */
+    --page:   1200px;
+    --gutter: clamp(16px, 4vw, 32px);
+}
+
+
+/* 2. BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0 var(--gutter) 64px;
+    font: 400 15px/1.6 var(--font);
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: linear-gradient(
+        135deg,
+        #cfddf5 0%,
+        #d5caf7 50%,
+        #eef6ff 100%
+    );
+
+    color: #1f2937;
+    font-family: Arial, sans-serif;
+}
+h1, h2, h3 {
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    margin-block: 36px 8px;
+    font-size: clamp(1.6rem, 1.3rem + 1vw, 2rem);
+    font-weight: 700;
+    color: var(--ink);
+}
+
+h2 {
+    margin-block: 32px 12px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink-2);
+}
+
+h3 {
+    margin-block: 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+p {
+    margin-block: 0 1em;
+}
+
+hr {
+    margin-block: 24px;
+    border: none;
+    border-top: 1px solid var(--border);
+}
+
+/* :where() keeps specificity at zero so button-style links can override it */
+:where(a) {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+:where(a):hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* The hidden attribute must always win, even over display rules below */
+[hidden] {
+    display: none !important;
+}
+
+
+/* 3. LAYOUT
+   ========================================================================== */
+
+/* Every top-level element shares one centered column */
+body > * {
+    max-width: var(--page);
+    margin-inline: auto;
+}
+
+.full-width {
+    width: 100%;
+}
+
+
+/* 4. COMPONENTS
+   ========================================================================== */
+
+/* 4.1 Buttons
+   -------------------------------------------------------------------------- */
+
+/* Base + primary. Zero specificity, so every variant below can override it. */
+:where(button, .btn, .btn-secondary, .quick-actions a, .dashboard-btn, .create-btn, .cancel-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    min-height: var(--control-h);
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    background: var(--accent);
+    color: #fff;
+    font: 600 14px/1 var(--font);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+:where(button, .btn, .btn-secondary, .quick-actions a, .dashboard-btn, .create-btn, .cancel-btn):hover {
+    background: var(--accent-hover);
+    text-decoration: none;
+}
+
+/* Secondary (cancel, back, edit) */
+.btn-secondary,
+.cancel-btn {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--ink-2);
+}
+
+.btn-secondary:hover,
+.cancel-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--muted);
+}
+
+/* Destructive. The attribute selector keeps your confirm() delete buttons working. */
+.btn-danger,
+button[onclick*="confirm"] {
+    background: var(--danger);
+}
+
+.btn-danger:hover,
+button[onclick*="confirm"]:hover {
+    background: var(--danger-hover);
+}
+
+.quick-actions a {
+    min-width: 150px;
+}
+
+.dashboard-btn {
+    margin-block: var(--sp-5);
+}
+
+
+/* 4.2 Form controls
+   -------------------------------------------------------------------------- */
+
+form {
+    margin-bottom: var(--sp-5);
+    padding: var(--sp-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+label {
+    display: block;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-2);
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    min-height: var(--control-h);
+    margin: 0 0 var(--sp-3);
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    background-color: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:where([type="checkbox"], [type="radio"]) {
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    accent-color: var(--accent);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* Custom chevron so every select looks the same across browsers */
+select {
+    appearance: none;
+    padding-right: 34px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%23667085' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5l3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+input[type="date"] {
+    cursor: pointer;
+}
+
+::placeholder {
+    color: #98a2b3;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--ring);
+    outline: 2px solid transparent; /* stays visible in forced-colors mode */
+}
+
+/* A labelled field */
+.form-group,
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: var(--sp-5);
+}
+
+.form-group label,
+.input-group label {
+    margin: 0;
+}
+
+.form-group :is(input, select, textarea),
+.input-group :is(input, select, textarea) {
+    margin: 0;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--sp-3);
+}
+
+
+/* 4.3 Badges
+   -------------------------------------------------------------------------- */
+
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--b-bg, #eef1f6);
+    color: var(--b-fg, var(--ink-2));
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+/* Priority */
+.badge-high   { --b-bg: #fdeceb; --b-fg: #b42318; }
+.badge-medium { --b-bg: #fff3d6; --b-fg: #8a5a00; }
+.badge-low    { --b-bg: #e2f5ec; --b-fg: #0b6b4a; }
+
+/* Status */
+.badge-pending     { --b-bg: #eef1f6;           --b-fg: #475467; }
+.badge-progress,
+.badge-in-progress { --b-bg: var(--accent-soft); --b-fg: var(--accent-hover); }
+.badge-completed   { --b-bg: #e2f5ec;           --b-fg: #0b6b4a; }
+
+
+/* 4.4 Cards
+   -------------------------------------------------------------------------- */
+
+.card {
+    padding: var(--sp-5) 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: inset 4px 0 0 var(--tone, transparent);
+}
+
+.card h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.card p {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.card--total     { --tone: var(--ink-2); }
+.card--pending   { --tone: var(--warning); }
+.card--progress  { --tone: var(--accent); }
+.card--completed { --tone: var(--success); }
+
+
+/* 4.5 Table
+   -------------------------------------------------------------------------- */
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* "border: 0" first cancels the grid lines that the old border="1" attribute adds */
+th,
+td {
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+th {
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+td {
+    padding: 14px var(--sp-4);
+    color: var(--ink-2);
+    vertical-align: middle;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: var(--surface-2);
+}
+
+/* Priority / status columns. Prefer the .badge classes for new markup. */
+td:nth-child(2),
+td:nth-child(4) {
+    font-weight: 600;
+}
+
+/* Action column: edit / delete */
+td a {
+    margin-right: 10px;
+}
+
+td form {
+    display: inline-block;
+    margin: 0 var(--sp-2) 0 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+}
+
+td :is(button, .btn) {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+/* Edit is a secondary action, Delete stays red */
+td form[action$="/edit"] button {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--ink-2);
+}
+
+td form[action$="/edit"] button:hover {
+    background: var(--surface-2);
+    border-color: var(--muted);
+}
+
+
+/* 4.6 Search box + suggestions dropdown
+   -------------------------------------------------------------------------- */
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    margin: 0;
+    padding-right: 40px;    /* room for the clear button */
+}
+
+.clear-btn {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1;
+}
+
+.clear-btn:hover {
+    background: var(--accent-soft);
+    color: var(--ink);
+}
+
+.suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: var(--z-dropdown);
+    max-height: 240px;
+    margin: 0;
+    padding: var(--sp-1);
+    list-style: none;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-pop);
+}
+
+.suggestions li {
+    padding: 8px 10px;
+    border-radius: var(--r-sm);
+    color: var(--ink-2);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.suggestions li strong {
+    color: var(--accent-hover);
+    font-weight: 700;
+}
+
+.suggestions li:hover,
+.suggestions li.active {
+    background: var(--accent-soft);
+}
+
+
+/* 4.7 Empty state
+   -------------------------------------------------------------------------- */
+
+.empty-state,
+body > p {
+    padding: var(--sp-8) 25px;
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-md);
+    color: var(--muted);
+    text-align: center;
+}
+
+
+/* 5. PAGES
+   ========================================================================== */
+
+/* 5.1 Dashboard
+   -------------------------------------------------------------------------- */
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-block: var(--sp-5) var(--sp-8);
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-4);
+    margin-block: var(--sp-6);
+}
+
+
+/* 5.2 Task list: filter bar
+   -------------------------------------------------------------------------- */
+
+/* Add class="filter-bar" to the search <form> in task.html.
+   (Do not target form[action="/tasks"]: the create form posts there too.) */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: var(--sp-4);
+}
+
+.filter-bar > .search-box {
+    flex: 2 1 260px;
+}
+
+.filter-bar > select {
+    flex: 1 1 150px;
+    margin: 0;
+}
+
+.filter-bar > button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+
+/* 5.3 Create / edit task
+   -------------------------------------------------------------------------- */
+
+.create-page {
+    padding-block: 48px;
+}
+
+.create-card {
+    width: min(760px, 100%);
+    margin-inline: auto;
+    padding: var(--sp-8) 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lift);
+}
+
+.create-header {
+    margin-bottom: var(--sp-6);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--border);
+}
+
+.create-header h1 {
+    margin: 0 0 6px;
+}
+
+.create-header p {
+    margin: 0;
+    color: var(--muted);
+}
+
+/* The card is already the container, so the form drops its own box */
+.create-card .task-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+}
+
+.create-card .task-form .input-group {
+    margin: 0;
+}
+
+/* Priority / due date / status: one compact panel, three even columns.
+   auto-fit wraps them on narrow screens without a media query. */
+.form-row,
+.task-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+.form-row .form-group,
+.task-fields .input-group {
+    gap: var(--sp-1);
+    margin: 0;
+}
+
+.form-row label,
+.task-fields label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.form-row :is(input, select),
+.task-fields :is(input, select) {
+    min-height: var(--control-h-sm);
+    padding-block: 7px;
+    font-size: 13.5px;
+}
+
+.task-fields select {
+    background-position: right 10px center;
+}
+
+
+/* 6. RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .create-page {
+        padding-block: var(--sp-6);
+    }
+
+    .create-card {
+        padding: var(--sp-6);
+    }
+
+    .form-buttons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .form-buttons :is(button, .btn, .create-btn, .cancel-btn) {
+        width: 100%;
+    }
+
+    /* Stack the filter bar (flex: none, or the basis values become heights) */
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-bar > * {
+        flex: none;
+        width: 100%;
+    }
+
+    /* Let wide tables scroll sideways instead of breaking the layout */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+
+/* 7. ACCESSIBILITY
+   ========================================================================== */
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+.toast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #28a745;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+
+    animation: slideIn 0.4s ease;
+}
+
+.toast.hide {
+    animation: slideOut 0.4s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+.cancel-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    margin-left: 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}

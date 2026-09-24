@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tasks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1 >All Tasks</h1>
+    <form method="GET" action="/tasks" id="search-form">
+
+    <div class="search-box">
+        <input type="text"
+               id="search-input"
+               name="q"
+               placeholder="Search by title..."
+               value="{{ query }}"
+               autocomplete="off">
+        <button type="button" id="clear-btn" class="clear-btn" aria-label="Clear search" hidden>&times;</button>
+        <ul id="suggestions" class="suggestions" hidden></ul>
+    </div>
+
+    <select name="status">
+        <option value="">All Status</option>
+        <option value="To Do" {% if status == "To Do" %}selected{% endif %}>To Do</option>
+        <option value="In Progress" {% if status == "In Progress" %}selected{% endif %}>In Progress</option>
+        <option value="Completed" {% if status == "Completed" %}selected{% endif %}>Completed</option>
+    </select>
+
+    <select name="priority">
+        <option value="">All Priorities</option>
+        <option value="Low" {% if priority == "Low" %}selected{% endif %}>Low</option>
+        <option value="Medium" {% if priority == "Medium" %}selected{% endif %}>Medium</option>
+        <option value="High" {% if priority == "High" %}selected{% endif %}>High</option>
+    </select>
+
+    <select name="sort">
+        <option value="">no sorting</option>
+        <option value="due_date" {% if sort == "due_date" %}selected{% endif %}>due date</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+<br>
+
+    <br><br>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div id="toast" class="toast">
+                ✅ {{ message }}
+            </div>
+
+            <script>
+                setTimeout(function() {
+                    document.getElementById("toast").classList.add("hide");
+                }, 3000);
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    {% if tasks %}
+
+    <table border="1" cellpadding="10">
+
+        <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>action</th>
+        </tr>
+
+        {% for task in tasks %}
+
+        <tr>
+            <td>{{ task["title"] }}</td>
+            <td>{{ task["priority"] }}</td>
+            <td>{{ task["due_date"] }}</td>
+            <td>{{ task["status"] }}</td>
+            <td>
+              <form action="/tasks/{{ task.id }}/edit" style="display:inline;">
+              <button type="submit">Edit</button>
+              </form>
+
+           <form action="/tasks/{{ task.id }}/delete" method="POST" style="display:inline;">
+           <button type="submit" onclick="return confirm('Are you sure you want to delete this task?');">
+           Delete
+           </button>
+           </form> 
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+    <hr>
+    <a href="/" class="dashboard-btn">Back to Dashboard</a>
+    {% else %}
+        {% if total_tasks == 0 %}
+        <P> no tasks exists</P>
+    {% else %}
+
+    <p>No tasks matches your search</p>
+
+    {% endif %}
+    {% endif %}
+
+    <script>
+    const titles = {{ task_titles|tojson }};
+    const initialQuery = {{ query|tojson }};
+
+    const form = document.getElementById("search-form");
+    const input = document.getElementById("search-input");
+    const clearBtn = document.getElementById("clear-btn");
+    const list = document.getElementById("suggestions");
+    let activeIndex = -1;
+
+    function toggleClear() {
+        clearBtn.hidden = input.value === "";
+    }
+
+    function closeList() {
+        list.innerHTML = "";
+        list.hidden = true;
+        activeIndex = -1;
+    }
+
+    function selectTitle(title) {
+        input.value = title;
+        closeList();
+        form.submit();
+    }
+
+    function renderSuggestions() {
+        const q = input.value.trim().toLowerCase();
+        list.innerHTML = "";
+        activeIndex = -1;
+
+        if (!q) { list.hidden = true; return; }
+
+        const matches = titles.filter(t => t.toLowerCase().includes(q)).slice(0, 8);
+        if (matches.length === 0) { list.hidden = true; return; }
+
+        matches.forEach(title => {
+            const li = document.createElement("li");
+            const i = title.toLowerCase().indexOf(q);
+
+            // highlight the matching part (built with DOM nodes, so it's XSS-safe)
+            const strong = document.createElement("strong");
+            strong.textContent = title.slice(i, i + q.length);
+            li.append(title.slice(0, i), strong, title.slice(i + q.length));
+
+            // mousedown fires before the input loses focus
+            li.addEventListener("mousedown", e => {
+                e.preventDefault();
+                selectTitle(title);
+            });
+            list.appendChild(li);
+        });
+        list.hidden = false;
+    }
+
+    function setActive(index) {
+        const items = list.querySelectorAll("li");
+        items.forEach(li => li.classList.remove("active"));
+        if (index >= 0 && index < items.length) {
+            items[index].classList.add("active");
+            items[index].scrollIntoView({ block: "nearest" });
+        }
+        activeIndex = index;
+    }
+
+    input.addEventListener("input", () => {
+        toggleClear();
+        renderSuggestions();
+    });
+
+    input.addEventListener("focus", renderSuggestions);
+    input.addEventListener("blur", closeList);
+
+    input.addEventListener("keydown", e => {
+        const items = list.querySelectorAll("li");
+        if (e.key === "ArrowDown" && items.length) {
+            e.preventDefault();
+            setActive((activeIndex + 1) % items.length);
+        } else if (e.key === "ArrowUp" && items.length) {
+            e.preventDefault();
+            setActive((activeIndex - 1 + items.length) % items.length);
+        } else if (e.key === "Enter" && activeIndex >= 0) {
+            e.preventDefault();
+            selectTitle(items[activeIndex].textContent);
+        } else if (e.key === "Escape") {
+            closeList();
+        }
+    });
+
+    clearBtn.addEventListener("click", () => {
+        input.value = "";
+        toggleClear();
+        closeList();
+        input.focus();
+        // if the current results were filtered by a search, reset them
+        if (initialQuery) form.submit();
+    });
+
+    toggleClear();
+</script>
+
+</body>
+</html>

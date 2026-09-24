@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Task</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="create-page">
+
+        <div class="create-card">
+
+            <div class="create-header">
+                <h1>Create New Task</h1>
+                <p>Add a task and keep your work organized.</p>
+            </div>
+
+            <form method="POST" action="/tasks" class="task-form">
+
+                <div class="input-group full-width">
+                    <label for="title">Task Title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Enter task title"
+                        required
+                    >
+                </div>
+
+                <div class="input-group full-width">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe your task..."
+                    ></textarea>
+                </div>
+
+                <div class="task-fields">
+
+                    <div class="input-group">
+                        <label for="priority">Priority</label>
+
+                        <select id="priority" name="priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="due_date">Due Date</label>
+
+                        <input
+                            type="date"
+                            id="due_date"
+                            name="due_date"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="status">Status</label>
+
+                        <select id="status" name="status">
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-buttons">
+
+                    <a href="/" class="cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="create-btn">
+                        Create Task
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

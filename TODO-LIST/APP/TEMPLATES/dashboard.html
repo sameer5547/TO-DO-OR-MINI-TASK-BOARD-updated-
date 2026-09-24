@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>mini task board</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <h1 style="font-family: 'Times New Roman', Times, serif;">MINI TASK BOARD</h1>
+
+    <p style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">Manage your tasks, priorities and deadlines in one place.</p>
+
+    <!-- Dashboard Statistics -->
+
+    <div class="dashboard-cards">
+
+        <div class="card">
+            <h3>Total Tasks</h3>
+            <p>{{ total }}</p>
+        </div>
+
+        <div class="card">
+            <h3>To Do</h3>
+            <p>{{ todo }}</p>
+        </div>
+
+        <div class="card">
+            <h3>In Progress</h3>
+            <p>{{ in_progress }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Completed</h3>
+            <p>{{ completed }}</p>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Navigation -->
+
+    <h2>Quick Actions</h2>
+
+    <a href="/tasks/new">
+        <div class="quick-actions">
+        <button type="button">CREATE NEW TASK</button>
+    </a>
+
+    <a href="/tasks">
+        <button type="button">VIEW ALL TASKS</button>
+    </a>
+    </div>
+
+    <hr>
+
+    <!-- Recent Tasks -->
+     {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div id="toast" class="toast">
+                ✅ {{ message }}
+            </div>
+
+            <script>
+                setTimeout(function() {
+                    document.getElementById("toast").classList.add("hide");
+                }, 3000);
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    <h2>Tasks</h2>
+
+    {% if tasks %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for task in tasks %}
+
+                <tr>
+                    <td>{{ task["title"] }}</td>
+                    <td>{{ task["priority"] }}</td>
+                    <td>{{ task["due_date"] }}</td>
+                    <td>{{ task["status"] }}</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <p>No tasks yet. Create your first task!</p>
+
+    {% endif %}
+
+</body>
+</html>
